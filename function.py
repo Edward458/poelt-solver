@@ -23,3 +23,4 @@ def get_height(height_list):
     for height in height_list:
         heights.append(height.get('csk'))
     return heights
+

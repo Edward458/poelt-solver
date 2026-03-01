@@ -1,10 +1,7 @@
-from bs4 import BeautifulSoup
+from Player import Player
 
-with open('teams-list.html', 'r', encoding='utf-8') as file:
-    html = file.read()
+player = Player('test','test','test','test','test','test','test','test')
 
-soup = BeautifulSoup(html,'html.parser')
+print(player.name)
 
-
-    
 

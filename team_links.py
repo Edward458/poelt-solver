@@ -34,10 +34,3 @@ the_league = {
                }
 }
 
-for conference in the_league:
-    current_dict = the_league[conference]
-    for division in current_dict:
-        print(f"Conference:{conference}")
-        print(f"Division:{division}")
-        for link in current_dict[division]:
-            print(f"Link:{link}")

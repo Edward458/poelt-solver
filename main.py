@@ -1,44 +1,43 @@
-from bs4 import BeautifulSoup
-import requests
-from function import get_age, get_height
+from nba_api.stats.static import teams
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.firefox.service import Service
+from webdriver_manager.firefox import GeckoDriverManager
+import pandas as pd
+from player_spec_fac import get_player_info
+from team_spec_fac import get_team_info
 
-# Get HTML content
-# url = "https://example.com"
-# response = requests.get(url)
-# html_content = response.text
+# Setup Firefox driver
+service = Service(GeckoDriverManager().install())
+driver = webdriver.Firefox(service=service)
+equipos = teams.get_teams()
+
+# getting teams
+
+data = []
+def get_player_info(id):
+    url = f"https://www.nba.com/team/{id}"
+    driver.get(url)
+    table = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.TAG_NAME, "table")))
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    for row in rows:
+        cells = row.find_elements(By.TAG_NAME, "td")
+        headers = row.find_elements(By.TAG_NAME, "th")
+        
+        # Check if it's a header row
+        if headers:
+            row_data = [cell.text for cell in headers]
+        else:
+            row_data = [cell.text for cell in cells]
+        
+        if row_data:  # Only add non-empty rows
+            data.append(row_data)
+
+        print(data)
+
+get_player_info('1610612744')
 
 
 
-
-
-
-
-
-
-
-with open('test.html', 'r', encoding='utf-8') as file:
-    html_content = file.read()
-
-
-
-# Parse with BeautifulSoup
-soup = BeautifulSoup(html_content, 'html.parser')
-
-table = soup.find('table', id='roster')
-
-roster  = table.find('tbody')
-
-name = roster.find_all('td', attrs={'data-stat':'player'})
-number = roster.find_all('th', attrs={'data-stat':'number'}) 
-position = roster.find_all('td', attrs={'data-stat':'pos'})
-height = get_height(roster.find_all('td', attrs={'data-stat':'height'}))
-age = get_age(roster.find_all('td', attrs={'data-stat':'birth_date'}))
-
-
-for i in range(len(name)):
-    print(f'{name[i].text} - {number[i].text} - {position[i].text} - {height[i]} - {age[i]}')
-
-# Now you can use soup to find elements:
-# soup.find('tag') - find first matching tag
-# soup.find_all('tag') - find all matching tags
-# soup.select('css_selector') - CSS selector search
